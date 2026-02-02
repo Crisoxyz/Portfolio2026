@@ -1,0 +1,11 @@
+---
+// Importi il layout
+import Layout from "../layouts/Layout.astro";
+
+// Importi il componente React (assicurati che il nome del file sia giusto, .jsx)
+import Welcome from "../components/Welcome.jsx";
+---
+
+<Layout title="Il mio Portfolio">
+  <Welcome client:load />
+</Layout>

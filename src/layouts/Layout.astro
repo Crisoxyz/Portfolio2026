@@ -1,0 +1,27 @@
+---
+interface Props {
+	title: string;
+}
+
+const { title } = Astro.props;
+
+// --- AGGIUNGI QUESTA RIGA FONDAMENTALE ---
+// I due punti ".." significano "torna indietro di una cartella" (da layouts a src)
+import '../styles/global.css';
+// ------------------------------------------
+---
+
+<!doctype html>
+<html lang="it">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content="Astro description" />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+	</head>
+        <body class="bg-black text-white min-h-screen">
+		<slot />
+	</body>
+</html>

@@ -1,0 +1,193 @@
+import React, { useState } from 'react';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+
+export default function PortfolioHome() {
+  const [isHovered, setIsHovered] = useState(false);
+
+  // --- PARALLASSE ---
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const springConfig = { stiffness: 40, damping: 25 };
+  const mouseX = useSpring(x, springConfig);
+  const mouseY = useSpring(y, springConfig);
+
+  // --- CURSORE ---
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+  const cursorSpringConfig = { stiffness: 500, damping: 28 };
+  const cursorXSpring = useSpring(cursorX, cursorSpringConfig);
+  const cursorYSpring = useSpring(cursorY, cursorSpringConfig);
+
+  // Movimenti
+  const moonMoveX = useTransform(mouseX, [-0.5, 0.5], [-20, 20]);
+  const moonMoveY = useTransform(mouseY, [-0.5, 0.5], [-20, 20]);
+  const flowerMoveX = useTransform(mouseX, [-0.5, 0.5], [-40, 40]);
+  const flowerMoveY = useTransform(mouseY, [-0.5, 0.5], [-20, 20]);
+
+  function handleMouseMove(event) {
+    const { clientX, clientY } = event;
+    const { innerWidth, innerHeight } = window;
+    x.set((clientX / innerWidth) - 0.5);
+    y.set((clientY / innerHeight) - 0.5);
+    cursorX.set(clientX);
+    cursorY.set(clientY);
+  }
+
+  // Animazione Entrata
+  const textReveal = {
+    hidden: { opacity: 0, y: 100, filter: "blur(10px)" },
+    visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.5, ease: "easeOut" } }
+  };
+
+// CONFIGURAZIONE PESO LETTERE TITOLO
+  const titleLetters = [
+    { char: "C", weight: "font-thin" },  // Chiederà peso 100 -> Il CSS fornirà il file Light
+    { char: "R", weight: "font-thin" },
+    { char: "I", weight: "font-thin" },
+    { char: "S", weight: "font-normal" },
+    { char: "T", weight: "font-medium" }, // Chiederà peso 900 -> Il CSS fornirà il file Black
+    { char: "I", weight: "font-bold" },
+    { char: "A", weight: "font-extrabold" },
+    { char: "N", weight: "font-black" },
+  ];
+
+  return (
+    <div 
+      className="relative w-full h-screen bg-black text-white overflow-hidden selection:bg-white selection:text-black font-sans"
+      onMouseMove={handleMouseMove}
+    >
+      
+      {/* 1. LAYER BASE: NOISE */}
+      <div 
+        className="absolute inset-0 pointer-events-none z-0 opacity-[0.05]"
+        style={{ backgroundImage: 'url("/noise.png")', backgroundSize: '100%' }}
+      ></div>
+
+      {/* 2. LAYER FIORI (z-20) */}
+      <motion.div 
+        className="absolute bottom-0 left-0 right-0 z-20 flex justify-center items-end pointer-events-none"
+        style={{ x: flowerMoveX, y: flowerMoveY }}
+      >
+        <motion.img 
+          initial={{ y: "100%", opacity: 0, rotate: 90 }} 
+          animate={{ y: "47%", opacity: 1, rotate: 90 }} 
+          transition={{ duration: 1.5, delay: 0.5 }}
+          src="/flowers.jpg"
+          alt="Flowers"
+          className="w-[30vh] max-w-none h-auto object-cover origin-center mix-blend-screen"
+        />
+      </motion.div>
+
+      {/* 3. LAYER LUNA (z-10) */}
+      <motion.div 
+        className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
+        style={{ x: moonMoveX, y: moonMoveY }}
+      >
+        <motion.img 
+          initial={{ x: "5%", y: "4%", scale: 0.8, opacity: 0 }}
+          animate={{ x: "5%", y: "4%", scale: 1, opacity: 1 }}
+          transition={{ duration: 2 }}
+          src="/moon.png"
+          alt="Moon"
+          className="w-[60vw] h-auto object-contain mix-blend-color-dodge brightness-110 contrast-125"
+        />
+      </motion.div>
+
+      {/* --- 4. LAYER TESTI E MENU --- */}
+      
+      <header className="absolute top-0 left-0 right-0 w-full p-6 md:p-10 z-30 flex justify-between items-baseline pointer-events-none mix-blend-difference">
+        
+        {/* TITOLO CRISTIAN */}
+        <motion.div 
+          variants={textReveal} initial="hidden" animate="visible"
+          className="flex items-baseline tracking-tighter leading-[0.8]"
+          style={{ fontSize: '11vw', fontFamily: "'MyCustomFont', sans-serif" }}
+        >
+          {titleLetters.map((item, i) => (
+            <span key={i} className={item.weight}>
+              {item.char}
+            </span>
+          ))}
+        </motion.div>
+
+        {/* 26'folio */}
+        <motion.h1 
+          variants={textReveal} initial="hidden" animate="visible" transition={{ delay: 0.2 }}
+          className="font-thin tracking-tighter leading-[0.8] text-right"
+          style={{ fontSize: '11vw', fontFamily: "'MyCustomFont', sans-serif" }}
+        >
+          26’folio
+        </motion.h1>
+      </header>
+
+      {/* NAVIGAZIONE (FlipLink) */}
+      <nav className="absolute inset-0 z-30 flex items-center justify-between px-10 md:px-40 pointer-events-none mix-blend-difference">
+        
+        <div className="flex gap-80 pointer-events-auto transform translate-y-12">
+          <FlipLink href="#" setHovered={setIsHovered}>WORKS</FlipLink>
+          <FlipLink href="#" setHovered={setIsHovered}>PRODUCT</FlipLink>
+        </div>
+
+        <div className="flex gap-80 pointer-events-auto transform translate-y-12">
+          <FlipLink href="#" setHovered={setIsHovered}>CONTACT</FlipLink>
+          <FlipLink href="#" setHovered={setIsHovered}>INFO</FlipLink>
+        </div>
+
+      </nav>
+
+      {/* 5. CURSORE */}
+      <motion.div
+        className="fixed top-0 left-0 w-8 h-8 border border-white rounded-full pointer-events-none z-50 mix-blend-difference"
+        style={{ x: cursorXSpring, y: cursorYSpring, translateX: "-50%", translateY: "-50%" }}
+        animate={{ scale: isHovered ? 2.5 : 1, backgroundColor: isHovered ? "white" : "transparent" }}
+      />
+
+    </div>
+  );
+}
+
+// --- COMPONENTE FLIP LINK ---
+const DURATION = 0.25;
+const STAGGER = 0.025;
+
+const FlipLink = ({ children, href, setHovered }) => {
+  return (
+    <motion.a
+      initial="initial"
+      whileHover="hovered"
+      href={href}
+      onMouseEnter={() => setHovered(true)} 
+      onMouseLeave={() => setHovered(false)}
+      // MODIFICHE QUI:
+      // 1. text-sm (invece di text-xs) -> Più grandi
+      // 2. text-white (invece di text-gray-400) -> Bianchi
+      className="relative block overflow-hidden whitespace-nowrap text-sm font-bold uppercase tracking-[0.2em] text-white"
+      style={{ lineHeight: 0.9 }} 
+    >
+      <div>
+        {children.split("").map((l, i) => (
+          <motion.span
+            variants={{ initial: { y: 0 }, hovered: { y: "-100%" } }}
+            transition={{ duration: DURATION, ease: "easeInOut", delay: STAGGER * i }}
+            className="inline-block"
+            key={i}
+          >
+            {l === " " ? "\u00A0" : l} 
+          </motion.span>
+        ))}
+      </div>
+      <div className="absolute inset-0">
+        {children.split("").map((l, i) => (
+          <motion.span
+            variants={{ initial: { y: "100%" }, hovered: { y: 0 } }}
+            transition={{ duration: DURATION, ease: "easeInOut", delay: STAGGER * i }}
+            className="inline-block text-white" 
+            key={i}
+          >
+            {l === " " ? "\u00A0" : l}
+          </motion.span>
+        ))}
+      </div>
+    </motion.a>
+  );
+};

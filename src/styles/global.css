@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* PESO 900 (font-black) -> Usa il file Black */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Black-.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* PESO 800 (font-extrabold) -> Usa il file Heavy */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Heavy-.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+}
+
+/* PESO 700 (font-bold) -> Usa il file Bold */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Bold-.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* PESO 500 (font-medium) -> Usa il file Medium */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Medium-.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+/* PESO 400 (font-normal) -> Usa il file Normal */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Regular-.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* --- TRUCCO FONDAMENTALE --- */
+/* PESO 100 (font-thin) -> Usa il file Light */
+/* Siccome non hai un file "Thin", usiamo il "Light" al suo posto */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Light-.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+}
+
+/* PESO 300 (font-light) -> Usa il file Light */
+@font-face {
+  font-family: 'MyCustomFont';
+  src: url('/fonts/KyivTypeSans-Light-.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+}

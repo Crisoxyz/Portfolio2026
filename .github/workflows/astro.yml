@@ -64,7 +64,10 @@ jobs:
         id: pages
         uses: actions/configure-pages@v5
       - name: Install dependencies
-        run: npm install
+        # Cancella il lockfile Windows e installa da zero per Linux
+        run: |
+          rm -f package-lock.json
+          npm install
         working-directory: ${{ env.BUILD_PATH }}
       - name: Build with Astro
         run: |

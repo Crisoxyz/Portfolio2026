@@ -4,7 +4,11 @@ import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
 export default function PortfolioHome() {
   const [isHovered, setIsHovered] = useState(false);
 
-  // --- AGGIUNTA: Rilevamento Mobile ---
+  // --- FIX IMMAGINI PER GITHUB PAGES ---
+  // Questo serve a far funzionare le immagini sia in locale che online
+  const base = import.meta.env.BASE_URL; 
+
+  // --- Rilevamento Mobile ---
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -27,7 +31,7 @@ export default function PortfolioHome() {
   const cursorXSpring = useSpring(cursorX, cursorSpringConfig);
   const cursorYSpring = useSpring(cursorY, cursorSpringConfig);
 
-  // Movimenti (Disabilitati su mobile per performance e layout stabile)
+  // Movimenti
   const moonMoveX = useTransform(mouseX, [-0.5, 0.5], [-20, 20]);
   const moonMoveY = useTransform(mouseY, [-0.5, 0.5], [-20, 20]);
   const flowerMoveX = useTransform(mouseX, [-0.5, 0.5], [-40, 40]);
@@ -49,7 +53,7 @@ export default function PortfolioHome() {
     visible: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1.5, ease: "easeOut" } }
   };
 
-  // CONFIGURAZIONE PESO LETTERE TITOLO (TUA CONFIGURAZIONE ORIGINALE)
+  // CONFIGURAZIONE PESO LETTERE TITOLO
   const titleLetters = [
     { char: "C", weight: "font-thin" },
     { char: "R", weight: "font-thin" },
@@ -70,22 +74,22 @@ export default function PortfolioHome() {
       {/* 1. LAYER BASE: NOISE */}
       <div 
         className="absolute inset-0 pointer-events-none z-0 opacity-[0.05]"
-        style={{ backgroundImage: 'url("/noise.png")', backgroundSize: '100%' }}
+        // FIX: Usiamo la variabile base per il percorso corretto
+        style={{ backgroundImage: `url("${base}noise.png")`, backgroundSize: '100%' }}
       ></div>
 
       {/* 2. LAYER FIORI (z-20) */}
       <motion.div 
         className="absolute bottom-0 left-0 right-0 z-20 flex justify-center items-end pointer-events-none"
-        // MOBILE: Parallasse disattivato (isMobile ? 0 : ...)
         style={{ x: isMobile ? 0 : flowerMoveX, y: isMobile ? 0 : flowerMoveY }}
       >
         <motion.img 
           initial={{ y: "100%", opacity: 0, rotate: 90 }} 
           animate={{ y: "47%", opacity: 1, rotate: 90 }} 
           transition={{ duration: 1.5, delay: 0.5 }}
-          src="/flowers.jpg"
+          // FIX: Percorso con base url
+          src={`${base}flowers.jpg`}
           alt="Flowers"
-          // MOBILE: w-[45vh] (più grandi) | DESKTOP: w-[30vh]
           className="w-[45vh] md:w-[30vh] max-w-none h-auto object-cover origin-center mix-blend-screen"
         />
       </motion.div>
@@ -93,31 +97,27 @@ export default function PortfolioHome() {
       {/* 3. LAYER LUNA (z-10) */}
       <motion.div 
         className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none"
-        // MOBILE: Parallasse disattivato
         style={{ x: isMobile ? 0 : moonMoveX, y: isMobile ? 0 : moonMoveY }}
       >
         <motion.img 
           initial={{ x: "5%", y: "4%", scale: 0.8, opacity: 0 }}
           animate={{ x: "5%", y: "4%", scale: 1, opacity: 1 }}
           transition={{ duration: 2 }}
-          src="/moon.png"
+          // FIX: Percorso con base url
+          src={`${base}moon.png`}
           alt="Moon"
-          // MOBILE: w-[100vw] (enorme) | DESKTOP: w-[60vw]
           className="w-[100vw] md:w-[60vw] h-auto object-contain mix-blend-color-dodge brightness-110 contrast-125"
         />
       </motion.div>
 
       {/* --- 4. LAYER TESTI E MENU --- */}
       
-      {/* HEADER */}
-      {/* MOBILE: pt-4 (attaccato su), flex-col (impilato) | DESKTOP: p-10, flex-row */}
       <header className="absolute top-0 left-0 right-0 w-full pt-4 pb-6 px-6 md:p-10 z-30 flex flex-col md:flex-row justify-between items-center md:items-baseline pointer-events-none mix-blend-difference gap-0">
         
         {/* TITOLO CRISTIAN */}
         <motion.div 
           variants={textReveal} initial="hidden" animate="visible"
           className="flex items-baseline tracking-tighter leading-[0.8]"
-          // MOBILE: 18vw (grande) | DESKTOP: 11vw
           style={{ fontSize: isMobile ? '18vw' : '11vw', fontFamily: "'MyCustomFont', sans-serif" }}
         >
           {titleLetters.map((item, i) => (
@@ -131,7 +131,6 @@ export default function PortfolioHome() {
         <motion.h1 
           variants={textReveal} initial="hidden" animate="visible" transition={{ delay: 0.2 }}
           className="font-thin tracking-tighter leading-[0.8] text-center md:text-right"
-          // MOBILE: 10vw | DESKTOP: 11vw
           style={{ fontSize: isMobile ? '10vw' : '11vw', fontFamily: "'MyCustomFont', sans-serif" }}
         >
           26’folio
@@ -139,7 +138,6 @@ export default function PortfolioHome() {
       </header>
 
       {/* NAVIGAZIONE */}
-      {/* MOBILE: top-[35%] (al centro), flex-col, gap-12 | DESKTOP: inset-0, gap-80 */}
       <nav className={`absolute left-0 right-0 z-30 flex flex-col md:flex-row items-center justify-end md:justify-between px-10 md:px-40 pointer-events-none mix-blend-difference gap-8 md:gap-0 ${isMobile ? 'top-[25%]' : 'inset-0'}`}>
         
         {/* Gruppo Sinistra */}
@@ -156,9 +154,8 @@ export default function PortfolioHome() {
 
       </nav>
 
-      {/* 5. CURSORE (Nascosto su Mobile) */}
+      {/* 5. CURSORE */}
       <motion.div
-        // AGGIUNTO: hidden md:block
         className="fixed top-0 left-0 w-8 h-8 border border-white rounded-full pointer-events-none z-50 mix-blend-difference hidden md:block"
         style={{ x: cursorXSpring, y: cursorYSpring, translateX: "-50%", translateY: "-50%" }}
         animate={{ scale: isHovered ? 2.5 : 1, backgroundColor: isHovered ? "white" : "transparent" }}
@@ -180,6 +177,8 @@ const FlipLink = ({ children, href, setHovered }) => {
       href={href}
       onMouseEnter={() => setHovered(true)} 
       onMouseLeave={() => setHovered(false)}
+      target="_blank" // Aggiunto per aprire i link esterni in nuova scheda (consigliato per social)
+      rel="noopener noreferrer"
       className="relative block overflow-hidden whitespace-nowrap text-sm font-bold uppercase tracking-[0.2em] text-white"
       style={{ lineHeight: 0.9 }} 
     >
